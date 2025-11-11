@@ -19,15 +19,17 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                // Configurar el entorno de SonarQube
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    // Ejecutar el análisis con SonarScanner
-                    sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=DVWA \
-                        -Dsonar.sources=vulnerabilities \
-                        -Dsonar.php.version=8.0
-                    '''
+                    // Usar la instalación de SonarScanner configurada en Jenkins
+                    script {
+                        def scannerHome = tool 'SonarQubeScanner' // nombre de la instalación del scanner
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=DVWA \
+                            -Dsonar.sources=vulnerabilities \
+                            -Dsonar.php.version=8.0
+                        """
+                    }
                 }
             }
         }
